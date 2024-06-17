@@ -266,6 +266,26 @@ def change_password():
     return {"status": "ok"}
 
 
+@app.route("/api/user/2fa")
+@login_required
+def get_2fa():
+    return {"status": "ok", "secret": current_user.totp_secret}
+
+
+@app.route("/api/user/2fa", methods=["POST"])
+@login_required
+def enable_2fa():
+    current_user.enable_2fa()
+    return {"status": "ok"}
+
+
+@app.route("/api/user/2fa", methods=["DELETE"])
+@login_required
+def disable_2fa():
+    current_user.disable_2fa()
+    return {"status": "ok"}
+
+
 @app.route("/api/logout")
 @login_required
 def logout():

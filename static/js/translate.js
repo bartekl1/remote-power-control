@@ -15,6 +15,10 @@ const textTranslations = [
     "Zapisz",
     "Hasła nie są takie same",
     "Powtórz hasło",
+    "Włącz",
+    "Wyłącz",
+    "2FA jest włączone",
+    "2FA jest wyłączone",
 ];
 
 const titleTranslations = {

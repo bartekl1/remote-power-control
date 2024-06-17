@@ -86,5 +86,43 @@ function changePassword() {
     })
 }
 
+function enable2FA() {
+    document.querySelector("#enable-2fa").classList.add("d-none");
+    document.querySelector("#enable-2fa-loading").classList.remove("d-none");
+
+    fetch("/api/user/2fa",
+        {
+            method: "POST",
+        })
+    .then(() => { window.location.reload(); });
+}
+
+function disable2FA() {
+    document.querySelector("#disable-2fa").classList.add("d-none");
+    document.querySelector("#disable-2fa-loading").classList.remove("d-none");
+
+    fetch("/api/user/2fa",
+        {
+            method: "DELETE",
+        })
+    .then(() => { window.location.reload(); });
+}
+
 document.querySelector("#save-user").addEventListener("click", editUser);
 document.querySelector("#change-password").addEventListener("click", changePassword);
+
+if (document.querySelector("#status-2fa").innerHTML === "enabled") (() => {
+    document.querySelector("#disable-2fa").addEventListener("click", disable2FA);
+
+    new QRCode(document.querySelector("#qr-2fa"), {
+        text: document.querySelector("#totp-url").innerHTML,
+        width: 256,
+        height: 256,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+})();
+else (() => {
+    document.querySelector("#enable-2fa").addEventListener("click", enable2FA);
+})();

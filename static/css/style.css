@@ -87,3 +87,10 @@ body {
     width: 175px;
     left: calc(100% - 176px);
 }
+
+#qr-2fa {
+    border-style: solid;
+    border-width: 12px;
+    border-color: #ffffff;
+    width: fit-content;
+}
