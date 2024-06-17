@@ -7,6 +7,14 @@ const textTranslations = [
     "Wystąpił błąd",
     "Błędne TOTP",
     "Anuluj",
+    "Edytuj użytkownika",
+    "Zmień hasło",
+    "Wyloguj się",
+    "Nazwa użytkownika jest zajęta",
+    "E-mail jest używany do pobierania zdjęcia profilowego z",
+    "Zapisz",
+    "Hasła nie są takie same",
+    "Powtórz hasło",
 ];
 
 const titleTranslations = {

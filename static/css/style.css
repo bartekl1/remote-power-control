@@ -31,3 +31,59 @@ body {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
+.navbar-brand {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+#profile-menu {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+#profile-menu span {
+    color: white;
+    font-size: 20px;
+    position: relative;
+    top: 1px;
+    right: 2px;
+    font-weight: 500;
+}
+
+#profile-menu img {
+    border-radius: 50%;
+
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+#user-menu {
+    width: 175px;
+    left: calc(100% - 176px);
+}

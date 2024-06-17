@@ -206,7 +206,7 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/internal_api/login", methods=["POST"])
+@app.route("/api/login", methods=["POST"])
 def login_api():
     username = request.json.get("username")
     password = request.json.get("password")
@@ -234,7 +234,39 @@ def login_api():
     return {"status": "ok"}
 
 
-@app.route("/internal_api/logout")
+@app.route("/api/user", methods=["PUT"])
+@login_required
+def edit_current_user():
+    username = request.json.get("username")
+    email = request.json.get("email")
+
+    if username is not None and username != current_user.username:
+        if User.get_by_username(username) is None:
+            current_user.change_username(username)
+        else:
+            return {"status": "error", "error": "username_taken"}
+
+    if email is not None and email != "" and email != current_user.email:
+        current_user.change_email(email)
+
+    return {"status": "ok"}
+
+
+@app.route("/api/user/password", methods=["PUT"])
+@login_required
+def change_password():
+    password = request.json.get("password")
+    if password is None or password == "":
+        return {"status": "error", "error": "password_required"}
+
+    username = current_user.username
+    current_user.change_password(password)
+    login_user(User.get_by_username(username))
+
+    return {"status": "ok"}
+
+
+@app.route("/api/logout")
 @login_required
 def logout():
     logout_user()

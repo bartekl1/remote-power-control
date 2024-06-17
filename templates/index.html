@@ -26,12 +26,101 @@
         <!-- Windows Phone -->
         <meta name="msapplication-navbutton-color" content="#0d6efd">
     </head>
-    <body>
-        {{ current_user.user_id }}
-        <br>
-        {{ current_user.username }}
-        <br>
-        <a href="/internal_api/logout">logout</a>
+    <body class="bg-body-secondary">
+        <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+            <div class="container-fluid">
+                <span class="navbar-brand mb-0 h1">Remote Power Control</span>
+                <div id="profile-menu" data-bs-toggle="dropdown" data-bs-target="#user-menu">
+                    <span>{{ current_user.username }}</span>
+                    <img src="{{ current_user.profile_picture_url }}" height="40" width="40" id="">
+                </div>
+                <ul class="dropdown-menu" id="user-menu">
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit-user-modal"><span text-id="8">Edit user</span></a></li>
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#change-password-modal"><span text-id="9">Change password</span></a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/api/logout"><span text-id="10">Log out</span></a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="modal fade" id="edit-user-modal" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="h1 modal-title fs-5"><span text-id="8">Edit user</span></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger d-none" id="username-taken">
+                            <span text-id="11">Username taken</span>
+                        </div>
+                        <div class="alert alert-danger d-none" id="edit-user-error-occurred">
+                            <span text-id="5">Error occurred</span>
+                        </div>
+
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="username" placeholder="Username" autocomplete="username" value="{{ current_user.username }}">
+                            <label for="username"><span text-id="1">Username</span></label>
+                        </div>
+                        <div class="form-floating">
+                            {% if current_user.email is not none %}
+                            {% set email = current_user.email %}
+                            {% else %}
+                            {% set email = "" %}
+                            {% endif %}
+                            <input type="email" class="form-control" id="email" placeholder="E-mail" autocomplete="email" value="{{ email }}">
+                            <label for="email"><span>E-mail</span></label>
+                            <div class="form-text ms-1">
+                                <span text-id="12">E-mail is used to get your profile picture from</span>
+                                <a href="https://gravatar.com/" target="_blank" rel="noopener noreferrer">Gravatar</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="save-user"><span text-id="13">Save</span></button>
+                        <button class="btn btn-primary d-none" id="save-user-loading" disabled>
+                            <span class="spinner-border spinner-border-sm"></span>
+                            <span text-id="13">Save</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="change-password-modal" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="h1 modal-title fs-5"><span text-id="9">Change password</span></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger d-none" id="passwords-not-same">
+                            <span text-id="14">Passwords are not the same</span>
+                        </div>
+                        <div class="alert alert-danger d-none" id="change-password-error-occurred">
+                            <span text-id="5">Error occurred</span>
+                        </div>
+
+                        <div class="form-floating mb-2">
+                            <input type="password" class="form-control" id="password" placeholder="Password" autocomplete="new-password">
+                            <label for="password"><span text-id="2">Password</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="password" class="form-control" id="retype-password" placeholder="Retype password" autocomplete="new-password">
+                            <label for="retype-password"><span text-id="15">Retype password</span></label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" id="change-password"><span text-id="9">Change password</span></button>
+                        <button class="btn btn-primary d-none" id="change-password-loading" disabled>
+                            <span class="spinner-border spinner-border-sm"></span>
+                            <span text-id="9">Change password</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script src="/static/js/translate.js"></script>
         <script src="/static/js/error.js"></script>

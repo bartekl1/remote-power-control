@@ -13,7 +13,7 @@ function login() {
     document.querySelector("#login").classList.add("d-none");
     document.querySelector("#login-loading").classList.remove("d-none");
 
-    fetch("/internal_api/login",
+    fetch("/api/login",
         {
             headers: {
                 'Accept': 'application/json',
@@ -60,7 +60,7 @@ function login2() {
     document.querySelector("#login2").classList.add("d-none");
     document.querySelector("#login-loading2").classList.remove("d-none");
 
-    fetch("/internal_api/login",
+    fetch("/api/login",
         {
             headers: {
                 'Accept': 'application/json',
