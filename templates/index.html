@@ -27,7 +27,11 @@
         <meta name="msapplication-navbutton-color" content="#0d6efd">
     </head>
     <body>
-        
+        {{ current_user.user_id }}
+        <br>
+        {{ current_user.username }}
+        <br>
+        <a href="/internal_api/logout">logout</a>
 
         <script src="/static/js/translate.js"></script>
         <script src="/static/js/error.js"></script>

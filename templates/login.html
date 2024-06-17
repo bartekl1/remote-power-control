@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Log in</title>
+
+        <link rel="stylesheet" href="/static/css/style.css">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
+
+        <script src="/static/js/theme.js"></script>
+
+        <link rel="manifest" href="/manifest.json">
+
+        <link rel="shortcut icon" href="/static/img/icon.ico">
+        <link rel="apple-touch-icon" href="/static/img/icon_x192.png">
+
+        <!-- Standard browsers -->
+        <meta name="theme-color" content="#0d6efd"/>
+        <!-- iOS Safari -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <!-- Windows Phone -->
+        <meta name="msapplication-navbutton-color" content="#0d6efd">
+    </head>
+    <body class="d-flex align-items-center">
+        <div class="form-login w-100 m-auto">
+            <img class="mb-4" src="/static/img/icon.svg" width="72" height="57">
+            <h1 class="h3 mb-3 fw-normal"><span text-id="0">Log in</span></h1>
+          
+            <div id="login-form1">
+                <div class="alert alert-danger d-none" id="wrong-username-or-password">
+                    <span text-id="4">Wrong username or password</span>
+                </div>
+                <div class="alert alert-danger d-none" id="error-occurred">
+                    <span text-id="5">Error occurred</span>
+                </div>
+                
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="username" placeholder=" " autocomplete="username">
+                    <label for="username"><span text-id="1">Username</span></label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password" placeholder=" " autocomplete="current-password">
+                    <label for="password"><span text-id="2">Password</span></label>
+                </div>
+                
+                <button class="btn btn-primary w-100 py-2" id="login">
+                    <i class="bi bi-key-fill"></i>
+                    <span text-id="0">Log in</span>
+                </button>
+                <button class="btn btn-primary w-100 py-2 d-none" id="login-loading" disabled>
+                    <span class="spinner-border spinner-border-sm"></span>
+                </button>
+            </div>
+
+            <div id="login-form2" class="d-none">
+                <div class="alert alert-danger d-none" id="wrong-totp">
+                    <span text-id="6">Wrong TOTP</span>
+                </div>
+                <div class="alert alert-danger d-none" id="error-occurred2">
+                    <span text-id="5">Error occurred</span>
+                </div>
+                
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" id="totp" placeholder=" ">
+                    <label for="totp"><span>TOTP</span></label>
+                </div>
+                
+                <button class="btn btn-primary w-100 py-2" id="login2">
+                    <i class="bi bi-key-fill"></i>
+                    <span text-id="0">Log in</span>
+                </button>
+                <button class="btn btn-primary w-100 py-2 d-none" id="login-loading2" disabled>
+                    <span class="spinner-border spinner-border-sm"></span>
+                </button>
+                
+                <button class="btn btn-secondary w-100 py-2 mt-1" id="cancel-login">
+                    <i class="bi bi-x-circle"></i>
+                    <span text-id="7">Cancel</span>
+                </button>
+            </div>
+        </div>
+
+        <script src="/static/js/translate.js"></script>
+        <script src="/static/js/error.js"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        
+        <script src="/static/js/login.js"></script>
+    </body>
+</html>

@@ -2,7 +2,4 @@ Flask
 flask-login
 mysql-connector-python
 argon2-cffi
-# requests
-# pyotp
-# tzlocal
-# pytz
+pyotp

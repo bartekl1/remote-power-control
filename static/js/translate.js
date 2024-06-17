@@ -1,9 +1,17 @@
 const textTranslations = [
-    
+    "Zaloguj się",
+    "Nazwa użytkownika",
+    "Hasło",
+    "Zaloguj się z",
+    "Zła nazwa użytkownika lub hasło",
+    "Wystąpił błąd",
+    "Błędne TOTP",
+    "Anuluj",
 ];
 
 const titleTranslations = {
     "Remote Power Control": "Remote Power Control",
+    "Log in": "Zaloguj się",
 };
 
 const placeholdersTranslations = {};
