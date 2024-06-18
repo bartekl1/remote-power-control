@@ -2,6 +2,12 @@ from flask import Flask, render_template, send_file, redirect, url_for, request
 from flask_login import LoginManager, login_required, logout_user, login_user, UserMixin, current_user
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+import paramiko.dsskey
+import paramiko.ecdsakey
+import paramiko.ed25519key
+import paramiko.rsakey
+from wakeonlan import send_magic_packet
+import paramiko
 import mysql.connector
 import pyotp
 
@@ -10,6 +16,7 @@ import random
 import time
 import string
 import hashlib
+import io
 
 with open("configs.json") as file:
     configs = json.load(file)
@@ -33,6 +40,12 @@ login_manager.init_app(app)
 
 
 class UserError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
+class DeviceError(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
@@ -176,6 +189,137 @@ class User(UserMixin):
 
         return User(result[0]["id"])
 
+    @property
+    def devices(self):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT id FROM devices WHERE user_id = %s", (self.user_id, ))
+        result = cursor.fetchall()
+        cursor.close()
+        db.close()
+
+        return [Device(row["id"]) for row in result]
+
+
+class Device:
+    def __init__(self, device_id):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM devices WHERE id = %s LIMIT 1", (device_id, ))
+        result = cursor.fetchall()
+        cursor.close()
+        db.close()
+
+        if len(result) == 0:
+            raise DeviceError("Device not found")
+
+        self.device_id: int = result[0]["id"]
+        self.user_id: int = result[0]["user_id"]
+        self.name: str = result[0]["name"]
+        self.enable_wol: bool = bool(result[0]["enable_wol"])
+        self.enable_ssh: bool = bool(result[0]["enable_ssh"])
+        self.mac_address: str = result[0]["mac_address"]
+        self.ip_address: str = result[0]["ip_address"]
+        self.ssh_username: str = result[0]["ssh_username"]
+        self.ssh_key_type: str = result[0]["ssh_key_type"]
+        self.ssh_key: str = result[0]["ssh_key"]
+        self.ssh_password: str = result[0]["ssh_password"]
+        self.shutdown_command = result[0]["shutdown_command"]
+        self.reboot_command = result[0]["reboot_command"]
+        self.logout_command = result[0]["logout_command"]
+        self.sleep_command = result[0]["sleep_command"]
+        self.hibernate_command = result[0]["sleep_command"]
+
+    @property
+    def user(self):
+        return User(self.user_id)
+
+    @property
+    def wake_available(self):
+        return self.enable_wol and self.mac_address is not None and self.mac_address != ""
+
+    @property
+    def shutdown_available(self):
+        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.shutdown_command is not None and self.shutdown_command != ""
+
+    @property
+    def reboot_available(self):
+        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.reboot_command is not None and self.reboot_command != ""
+
+    @property
+    def logout_available(self):
+        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.logout_command is not None and self.logout_command != ""
+
+    @property
+    def sleep_available(self):
+        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.sleep_command is not None and self.sleep_command != ""
+
+    @property
+    def hibernate_available(self):
+        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.hibernate_command is not None and self.hibernate_command != ""
+
+    def wake(self):
+        if not self.wake_available:
+            raise DeviceError("Wake is not available for this device")
+        send_magic_packet(self.mac_address)
+
+    def _exec_ssh_command(self, command):
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        if self.ssh_key is None or self.ssh_key == "":
+            client.connect(hostname=self.ip_address,
+                           username=self.ssh_username,
+                           password=self.ssh_password,
+                           allow_agent=False,
+                           look_for_keys=False)
+        else:
+            if self.ssh_key_type == "DSA":
+                key_class = paramiko.dsskey.DSSKey
+            elif self.ssh_key_type == "RSA":
+                key_class = paramiko.rsakey.RSAKey
+            elif self.ssh_key_type == "ECDSA":
+                key_class = paramiko.ecdsakey.ECDSAKey
+            elif self.ssh_key_type == "Ed25519":
+                key_class = paramiko.ed25519key.Ed25519Key
+            key = key_class.from_private_key(
+                io.StringIO(self.ssh_key),
+                password=self.ssh_password)
+            client.connect(hostname=self.ip_address,
+                           username=self.ssh_username,
+                           pkey=key,
+                           allow_agent=False,
+                           look_for_keys=False)
+
+        client.exec_command(command)
+
+        client.close()
+
+    def shutdown(self):
+        if not self.shutdown_available:
+            raise DeviceError("Shutdown is not available for this device")
+        self._exec_ssh_command(self.shutdown_command)
+
+    def reboot(self):
+        if not self.reboot_available:
+            raise DeviceError("Reboot is not available for this device")
+        self._exec_ssh_command(self.reboot_command)
+
+    def logout(self):
+        if not self.logout_available:
+            raise DeviceError("Logout is not available for this device")
+        self._exec_ssh_command(self.logout_command)
+
+    def sleep(self):
+        if not self.sleep_available:
+            raise DeviceError("Sleep is not available for this device")
+        self._exec_ssh_command(self.sleep_command)
+
+    def hibernate(self):
+        if not self.hibernate_available:
+            raise DeviceError("Hibernate is not available for this device")
+        self._exec_ssh_command(self.hibernate_command)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -283,6 +427,135 @@ def enable_2fa():
 @login_required
 def disable_2fa():
     current_user.disable_2fa()
+    return {"status": "ok"}
+
+
+@app.route("/api/device/<device_id>/wake", methods=["POST"])
+@login_required
+def wake_device(device_id):
+    try:
+        device = Device(device_id)
+    except DeviceError:
+        return {"status": "error", "error": "device_not_found"}
+
+    if current_user.user_id != device.user.user_id:
+        return {"status": "error", "error": "access_denied"}
+
+    if not device.wake_available:
+        return {"status": "error", "error": "wake_not_available"}
+
+    device.wake()
+
+    return {"status": "ok"}
+
+
+@app.route("/api/device/<device_id>/shutdown", methods=["POST"])
+@login_required
+def shutdown_device(device_id):
+    try:
+        device = Device(device_id)
+    except DeviceError:
+        return {"status": "error", "error": "device_not_found"}
+
+    if current_user.user_id != device.user.user_id:
+        return {"status": "error", "error": "access_denied"}
+
+    if not device.shutdown_available:
+        return {"status": "error", "error": "shutdown_not_available"}
+
+    try:
+        device.shutdown()
+    except Exception:
+        return {"status": "error", "error": "ssh_error"}
+
+    return {"status": "ok"}
+
+
+@app.route("/api/device/<device_id>/reboot", methods=["POST"])
+@login_required
+def reboot_device(device_id):
+    try:
+        device = Device(device_id)
+    except DeviceError:
+        return {"status": "error", "error": "device_not_found"}
+
+    if current_user.user_id != device.user.user_id:
+        return {"status": "error", "error": "access_denied"}
+
+    if not device.reboot_available:
+        return {"status": "error", "error": "reboot_not_available"}
+
+    try:
+        device.reboot()
+    except Exception:
+        return {"status": "error", "error": "ssh_error"}
+
+    return {"status": "ok"}
+
+
+@app.route("/api/device/<device_id>/logout", methods=["POST"])
+@login_required
+def logout_device(device_id):
+    try:
+        device = Device(device_id)
+    except DeviceError:
+        return {"status": "error", "error": "device_not_found"}
+
+    if current_user.user_id != device.user.user_id:
+        return {"status": "error", "error": "access_denied"}
+
+    if not device.logout_available:
+        return {"status": "error", "error": "logout_not_available"}
+
+    try:
+        device.logout()
+    except Exception:
+        return {"status": "error", "error": "ssh_error"}
+
+    return {"status": "ok"}
+
+
+@app.route("/api/device/<device_id>/sleep", methods=["POST"])
+@login_required
+def sleep_device(device_id):
+    try:
+        device = Device(device_id)
+    except DeviceError:
+        return {"status": "error", "error": "device_not_found"}
+
+    if current_user.user_id != device.user.user_id:
+        return {"status": "error", "error": "access_denied"}
+
+    if not device.sleep_available:
+        return {"status": "error", "error": "sleep_not_available"}
+
+    try:
+        device.sleep()
+    except Exception:
+        return {"status": "error", "error": "ssh_error"}
+
+    return {"status": "ok"}
+
+
+@app.route("/api/device/<device_id>/hibernate", methods=["POST"])
+@login_required
+def hibernate_device(device_id):
+    try:
+        device = Device(device_id)
+    except DeviceError:
+        return {"status": "error", "error": "device_not_found"}
+
+    if current_user.user_id != device.user.user_id:
+        return {"status": "error", "error": "access_denied"}
+
+    if not device.hibernate_available:
+        return {"status": "error", "error": "hibernate_not_available"}
+
+    try:
+        device.hibernate()
+    except Exception:
+        return {"status": "error", "error": "ssh_error"}
+
     return {"status": "ok"}
 
 

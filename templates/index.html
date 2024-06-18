@@ -172,6 +172,16 @@
             </div>
         </div>
 
+        {% for dev in current_user.devices %}
+        {{ dev.device_id }}
+        {{ dev.name }}
+        {{ dev.mac_address }}
+        {{ dev.ip_address }}
+        {{ dev.enable_wol }}
+        {{ dev.enable_ssh }}
+        <br>
+        {% endfor %}
+
         <script src="/static/js/translate.js"></script>
         <script src="/static/js/error.js"></script>
         <script src="/static/js/copy.js"></script>
