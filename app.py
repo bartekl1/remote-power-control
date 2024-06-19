@@ -200,6 +200,9 @@ class User(UserMixin):
 
         return [Device(row["id"]) for row in result]
 
+    def create_device(self, name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command):
+        return Device.create(self, name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command)
+
 
 class Device:
     def __init__(self, device_id):
@@ -318,6 +321,33 @@ class Device:
             raise DeviceError("Hibernate is not available for this device")
         self._exec_ssh_command(self.hibernate_command)
 
+    def edit(self, name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("UPDATE devices SET name = %s, mac_address = %s, ip_address = %s, ssh_username = %s, ssh_key_type = %s, ssh_key = %s, ssh_password = %s, shutdown_command = %s, reboot_command = %s, logout_command = %s, sleep_command = %s, hibernate_command = %s WHERE id = %s", (name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command, self.device_id, ))
+        db.commit()
+        cursor.close()
+        db.close()
+
+    def delete(self):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("DELETE FROM devices WHERE id = %s", (self.device_id, ))
+        db.commit()
+        cursor.close()
+        db.close()
+
+    @staticmethod
+    def create(user, name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("INSERT INTO devices (user_id, name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (user.user_id, name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command, ))
+        device_id = cursor.lastrowid
+        db.commit()
+        cursor.close()
+        db.close()
+        return Device(device_id)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -425,6 +455,72 @@ def enable_2fa():
 @login_required
 def disable_2fa():
     current_user.disable_2fa()
+    return {"status": "ok"}
+
+
+@app.route("/api/device", methods=["POST"])
+@login_required
+def create_device():
+    name = request.json.get("name")
+    mac_address = request.json.get("mac_address")
+    ip_address = request.json.get("ip_address")
+    ssh_username = request.json.get("ssh_username")
+    ssh_key_type = request.json.get("ssh_key_type")
+    ssh_key = request.json.get("ssh_key")
+    ssh_password = request.json.get("ssh_password")
+    shutdown_command = request.json.get("shutdown_command")
+    reboot_command = request.json.get("reboot_command")
+    logout_command = request.json.get("logout_command")
+    sleep_command = request.json.get("sleep_command")
+    hibernate_command = request.json.get("hibernate_command")
+
+    current_user.create_device(name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command)
+
+    return {"status": "ok"}
+
+
+@app.route("/api/device/<device_id>", methods=["PUT"])
+@login_required
+def edit_device(device_id):
+    name = request.json.get("name")
+    mac_address = request.json.get("mac_address")
+    ip_address = request.json.get("ip_address")
+    ssh_username = request.json.get("ssh_username")
+    ssh_key_type = request.json.get("ssh_key_type")
+    ssh_key = request.json.get("ssh_key")
+    ssh_password = request.json.get("ssh_password")
+    shutdown_command = request.json.get("shutdown_command")
+    reboot_command = request.json.get("reboot_command")
+    logout_command = request.json.get("logout_command")
+    sleep_command = request.json.get("sleep_command")
+    hibernate_command = request.json.get("hibernate_command")
+
+    try:
+        device = Device(device_id)
+    except DeviceError:
+        return {"status": "error", "error": "device_not_found"}
+
+    if current_user.user_id != device.user.user_id:
+        return {"status": "error", "error": "access_denied"}
+
+    device.edit(name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command)
+
+    return {"status": "ok"}
+
+
+@app.route("/api/device/<device_id>", methods=["DELETE"])
+@login_required
+def delete_device(device_id):
+    try:
+        device = Device(device_id)
+    except DeviceError:
+        return {"status": "error", "error": "device_not_found"}
+
+    if current_user.user_id != device.user.user_id:
+        return {"status": "error", "error": "access_denied"}
+
+    device.delete()
+
     return {"status": "ok"}
 
 

@@ -172,6 +172,10 @@
             </div>
         </div>
 
+        <button class="btn btn-success btn-sm ms-3 mt-2 mb-1" id="add-device-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Add">
+            <i class="bi bi-plus-lg"></i>
+        </button>
+
         {% for device in current_user.devices %}
         <div class="device-frame" device-id="{{ device.device_id }}">
             <div class="device-name fs-3">{{ device.name }}</div>

@@ -19,6 +19,7 @@ const textTranslations = [
     "Wyłącz",
     "2FA jest włączone",
     "2FA jest wyłączone",
+    "Dodaj",
 ];
 
 const titleTranslations = {
@@ -41,6 +42,7 @@ const dataBSTranslations = {
     "Log out": "Wyloguj",
     "Sleep": "Uśpij",
     "Hibernate": "Hibernuj",
+    "Add": "Dodaj",
 };
 
 if (window.navigator.language.split("-")[0] == "pl") {
