@@ -32,7 +32,16 @@ const alternativeTextTranslations = {};
 
 const elementsTitlesTranslations = {};
 
-const dataBSTranslations = {};
+const dataBSTranslations = {
+    "Edit": "Edytuj",
+    "Delete": "Usuń",
+    "Wake up": "Obudź",
+    "Shut down": "Zamknij",
+    "Reboot": "Uruchom ponownie",
+    "Log out": "Wyloguj",
+    "Sleep": "Uśpij",
+    "Hibernate": "Hibernuj",
+};
 
 if (window.navigator.language.split("-")[0] == "pl") {
     document.querySelector("html").lang = "pl";

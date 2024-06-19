@@ -94,3 +94,24 @@ body {
     border-color: #ffffff;
     width: fit-content;
 }
+
+.device-frame {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #909599;
+    border-radius: 5px;
+
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    padding: 10px;
+    padding-left: 15px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .device-frame {
+        border-color: #6b6e71;
+    }
+}

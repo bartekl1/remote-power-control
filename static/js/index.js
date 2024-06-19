@@ -108,6 +108,25 @@ function disable2FA() {
     .then(() => { window.location.reload(); });
 }
 
+function powerAction(evt) {
+    var deviceID = evt.currentTarget.parentElement.parentElement.getAttribute("device-id");
+    var actionName = evt.currentTarget.className.match(/device-(\w+)-button/)[1];
+
+    if (!(["wake", "shutdown", "reboot", "logout", "sleep", "hibernate"].includes(actionName))) return;
+
+    evt.currentTarget.classList.add("d-none");
+    evt.currentTarget.parentElement.querySelector(`.device-${actionName}-loading-button`).classList.remove("d-none");
+
+    fetch(`/api/device/${deviceID}/${actionName}`, { method: "POST" })
+    .then((res) => {
+        var deviceID = res.url.match(/\/api\/device\/(\w+)\/(\w+)/)[1];
+        var actionName = res.url.match(/\/api\/device\/(\w+)\/(\w+)/)[2];
+
+        document.querySelector(`[device-id="${deviceID}"]`).querySelector(`.device-${actionName}-button`).classList.remove("d-none");
+        document.querySelector(`[device-id="${deviceID}"]`).querySelector(`.device-${actionName}-loading-button`).classList.add("d-none");
+    });
+}
+
 document.querySelector("#save-user").addEventListener("click", editUser);
 document.querySelector("#change-password").addEventListener("click", changePassword);
 
@@ -126,3 +145,5 @@ if (document.querySelector("#status-2fa").innerHTML === "enabled") (() => {
 else (() => {
     document.querySelector("#enable-2fa").addEventListener("click", enable2FA);
 })();
+
+document.querySelectorAll([".device-wake-button", ".device-shutdown-button", ".device-reboot-button", ".device-logout-button", ".device-sleep-button", ".device-hibernate-button"]).forEach(e => { e.addEventListener("click", powerAction); });

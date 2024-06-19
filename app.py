@@ -216,8 +216,6 @@ class Device:
         self.device_id: int = result[0]["id"]
         self.user_id: int = result[0]["user_id"]
         self.name: str = result[0]["name"]
-        self.enable_wol: bool = bool(result[0]["enable_wol"])
-        self.enable_ssh: bool = bool(result[0]["enable_ssh"])
         self.mac_address: str = result[0]["mac_address"]
         self.ip_address: str = result[0]["ip_address"]
         self.ssh_username: str = result[0]["ssh_username"]
@@ -236,27 +234,27 @@ class Device:
 
     @property
     def wake_available(self):
-        return self.enable_wol and self.mac_address is not None and self.mac_address != ""
+        return self.mac_address is not None and self.mac_address != ""
 
     @property
     def shutdown_available(self):
-        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.shutdown_command is not None and self.shutdown_command != ""
+        return self.ip_address is not None and self.ip_address != "" and self.shutdown_command is not None and self.shutdown_command != ""
 
     @property
     def reboot_available(self):
-        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.reboot_command is not None and self.reboot_command != ""
+        return self.ip_address is not None and self.ip_address != "" and self.reboot_command is not None and self.reboot_command != ""
 
     @property
     def logout_available(self):
-        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.logout_command is not None and self.logout_command != ""
+        return self.ip_address is not None and self.ip_address != "" and self.logout_command is not None and self.logout_command != ""
 
     @property
     def sleep_available(self):
-        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.sleep_command is not None and self.sleep_command != ""
+        return self.ip_address is not None and self.ip_address != "" and self.sleep_command is not None and self.sleep_command != ""
 
     @property
     def hibernate_available(self):
-        return self.enable_ssh and self.ip_address is not None and self.ip_address != "" and self.hibernate_command is not None and self.hibernate_command != ""
+        return self.ip_address is not None and self.ip_address != "" and self.hibernate_command is not None and self.hibernate_command != ""
 
     def wake(self):
         if not self.wake_available:
