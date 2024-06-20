@@ -188,6 +188,20 @@ class User(UserMixin):
             return None
 
         return User(result[0]["id"])
+    
+    @staticmethod
+    def get_by_access_token(access_token):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT user_id FROM access_tokens WHERE token = %s LIMIT 1", (access_token, ))
+        result = cursor.fetchall()
+        cursor.close()
+        db.close()
+
+        if len(result) == 0:
+            return None
+
+        return User(result[0]["user_id"])
 
     @property
     def devices(self):
@@ -363,6 +377,17 @@ def load_user(user_id):
         return User.get_by_alternative_id(user_id)
     except UserError:
         return None
+
+
+@login_manager.request_loader
+def load_user_from_request(request):
+    authorization_header = request.headers.get("Authorization", "")
+    if authorization_header.startswith("Bearer "):
+        try:
+            return User.get_by_access_token(authorization_header.split(" ")[1])
+        except Exception:
+            return None
+    return None
 
 
 @app.route("/favicon.ico")
