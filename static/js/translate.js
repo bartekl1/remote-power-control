@@ -33,6 +33,11 @@ const textTranslations = [
     "Polecenie wylogowywania",
     "Polecenie uśpienia",
     "Polecenie hibernacji",
+    "Edytuj urządzenie",
+    "Edytuj",
+    "Usuń urządzenie",
+    "Usuń",
+    "Usunąć",
 ];
 
 const titleTranslations = {

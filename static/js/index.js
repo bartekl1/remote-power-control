@@ -156,6 +156,14 @@ function addDevice() {
     .then(() => { window.location.reload(); });
 }
 
+function deleteDevice() {    
+    document.querySelector("#delete-device").classList.add("d-none");
+    document.querySelector("#delete-device-loading").classList.remove("d-none");
+
+    fetch(`/api/device/${document.querySelector("#delete-device-id").innerText}`, { method: "DELETE" })
+    .then(() => { window.location.reload(); });
+}
+
 document.querySelector("#save-user").addEventListener("click", editUser);
 document.querySelector("#change-password").addEventListener("click", changePassword);
 
@@ -197,3 +205,11 @@ document.querySelector("#add-device-cancel").addEventListener("click", () => {
 });
 
 document.querySelector("#add-device").addEventListener("click", addDevice);
+document.querySelector("#delete-device").addEventListener("click", deleteDevice);
+
+document.querySelectorAll(".device-delete-button").forEach((e) => {
+    e.addEventListener("click", (evt) => {
+        document.querySelector("#delete-device-name").innerHTML = evt.currentTarget.parentElement.parentElement.querySelector(".device-name").innerText;
+        document.querySelector("#delete-device-id").innerHTML = evt.currentTarget.parentElement.parentElement.getAttribute("device-id");
+    });
+});

@@ -182,19 +182,19 @@
                     <div class="modal-body">
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-name" placeholder=" ">
-                            <label for="device-name"><span text-id="22">Name</span></label>
+                            <label for="add-device-name"><span text-id="22">Name</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-mac-address" placeholder=" ">
-                            <label for="mac-address"><span text-id="23">MAC address</span></label>
+                            <label for="add-device-mac-address"><span text-id="23">MAC address</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-ip-address" placeholder=" ">
-                            <label for="ip-address"><span text-id="24">IP address</span></label>
+                            <label for="add-device-ip-address"><span text-id="24">IP address</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-ssh-username" placeholder=" ">
-                            <label for="ssh-username"><span text-id="25">SSH username</span></label>
+                            <label for="add-device-ssh-username"><span text-id="25">SSH username</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <select class="form-select" id="add-device-ssh-key-type">
@@ -204,35 +204,35 @@
                                 <option value="ECDSA">ECDSA</option>
                                 <option value="Ed25519">Ed25519</option>
                             </select>
-                            <label for="ssh-key-type"><span text-id="26">SSH key type</span></label>
+                            <label for="add-device-ssh-key-type"><span text-id="26">SSH key type</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <textarea class="form-control" placeholder=" " id="add-device-ssh-key" style="height: 175px"></textarea>
-                            <label for="ssh-key"><span text-id="27">SSH key</span></label>
+                            <label for="add-device-ssh-key"><span text-id="27">SSH key</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-ssh-password" placeholder=" ">
-                            <label for="ssh-password"><span text-id="28">SSH password</span></label>
+                            <label for="add-device-ssh-password"><span text-id="28">SSH password</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-shutdown-command" placeholder=" ">
-                            <label for="shutdown-command"><span text-id="29">Shutdown command</span></label>
+                            <label for="add-device-shutdown-command"><span text-id="29">Shutdown command</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-reboot-command" placeholder=" ">
-                            <label for="reboot-command"><span text-id="30">Reboot command</span></label>
+                            <label for="add-device-reboot-command"><span text-id="30">Reboot command</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-logout-command" placeholder=" ">
-                            <label for="logout-command"><span text-id="31">Logout command</span></label>
+                            <label for="add-device-logout-command"><span text-id="31">Logout command</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-sleep-command" placeholder=" ">
-                            <label for="sleep-command"><span text-id="32">Sleep command</span></label>
+                            <label for="add-device-sleep-command"><span text-id="32">Sleep command</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="add-device-hibernate-command" placeholder=" ">
-                            <label for="hibernate-command"><span text-id="33">Hibernate command</span></label>
+                            <label for="add-device-hibernate-command"><span text-id="33">Hibernate command</span></label>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -241,6 +241,107 @@
                         <button class="btn btn-success d-none" id="add-device-loading" disabled>
                             <span class="spinner-border spinner-border-sm"></span>
                             <span text-id="20">Add</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="edit-device-modal" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="h1 modal-title fs-5"><span text-id="34">Edit device</span></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-name" placeholder=" ">
+                            <label for="edit-device-name"><span text-id="22">Name</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-mac-address" placeholder=" ">
+                            <label for="edit-device-mac-address"><span text-id="23">MAC address</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-ip-address" placeholder=" ">
+                            <label for="edit-device-ip-address"><span text-id="24">IP address</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-ssh-username" placeholder=" ">
+                            <label for="edit-device-ssh-username"><span text-id="25">SSH username</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <select class="form-select" id="edit-device-ssh-key-type">
+                                <option value="" selected></option>
+                                <option value="DSA">DSA</option>
+                                <option value="RSA">RSA</option>
+                                <option value="ECDSA">ECDSA</option>
+                                <option value="Ed25519">Ed25519</option>
+                            </select>
+                            <label for="edit-device-ssh-key-type"><span text-id="26">SSH key type</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <textarea class="form-control" placeholder=" " id="edit-device-ssh-key" style="height: 175px"></textarea>
+                            <label for="edit-device-ssh-key"><span text-id="27">SSH key</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-ssh-password" placeholder=" ">
+                            <label for="edit-device-ssh-password"><span text-id="28">SSH password</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-shutdown-command" placeholder=" ">
+                            <label for="edit-device-shutdown-command"><span text-id="29">Shutdown command</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-reboot-command" placeholder=" ">
+                            <label for="edit-device-reboot-command"><span text-id="30">Reboot command</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-logout-command" placeholder=" ">
+                            <label for="edit-device-logout-command"><span text-id="31">Logout command</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-sleep-command" placeholder=" ">
+                            <label for="edit-device-sleep-command"><span text-id="32">Sleep command</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-hibernate-command" placeholder=" ">
+                            <label for="edit-device-hibernate-command"><span text-id="33">Hibernate command</span></label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="edit-device-cancel" data-bs-dismiss="modal"><span text-id="7">Cancel</span></button>
+                        <button class="btn btn-primary" id="edit-device"><span text-id="35">Edit</span></button>
+                        <button class="btn btn-primary d-none" id="edit-device-loading" disabled>
+                            <span class="spinner-border spinner-border-sm"></span>
+                            <span text-id="35">Edit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="delete-device-modal" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="h1 modal-title fs-5"><span text-id="36">Delete device</span></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <span class="d-none" id="delete-device-id"></span>
+                        <div>
+                            <span text-id="38">Do you want to delete</span>
+                            <span id="delete-device-name"></span>?
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="delete-device-cancel" data-bs-dismiss="modal"><span text-id="7">Cancel</span></button>
+                        <button class="btn btn-primary" id="delete-device"><span text-id="37">Delete</span></button>
+                        <button class="btn btn-primary d-none" id="delete-device-loading" disabled>
+                            <span class="spinner-border spinner-border-sm"></span>
+                            <span text-id="37">Delete</span>
                         </button>
                     </div>
                 </div>
@@ -319,11 +420,11 @@
                 {% endif %}
                 
                 <span class="me-2"></span>
-                
-                <button class="btn btn-secondary btn-sm device-edit-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Edit">
+
+                <button class="btn btn-secondary btn-sm device-edit-button toggle-tooltip" data-bs-placement="bottom" data-bs-original-title="Edit" data-bs-toggle="modal" data-bs-target="#edit-device-modal">
                     <i class="bi bi-pencil-fill"></i>
                 </button>
-                <button class="btn btn-danger btn-sm device-delete-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Delete">
+                <button class="btn btn-danger btn-sm device-delete-button toggle-tooltip" data-bs-placement="bottom" data-bs-original-title="Delete" data-bs-toggle="modal" data-bs-target="#delete-device-modal">
                     <i class="bi bi-trash-fill"></i>
                 </button>
             </div>
