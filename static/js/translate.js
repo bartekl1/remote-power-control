@@ -38,6 +38,7 @@ const textTranslations = [
     "Usuń urządzenie",
     "Usuń",
     "Usunąć",
+    "Edytuj dane logowania do urządzenia",
 ];
 
 const titleTranslations = {
@@ -61,6 +62,7 @@ const dataBSTranslations = {
     "Sleep": "Uśpij",
     "Hibernate": "Hibernuj",
     "Add": "Dodaj",
+    "Edit credentials": "Edytuj dane logowania",
 };
 
 if (window.navigator.language.split("-")[0] == "pl") {

@@ -181,6 +181,27 @@ function editDevice() {
     .then(() => { window.location.reload(); });
 }
 
+function editDeviceCredentials() {    
+    document.querySelector("#edit-device-credentials").classList.add("d-none");
+    document.querySelector("#edit-device-credentials-loading").classList.remove("d-none");
+
+    fetch(`/api/device/${document.querySelector("#edit-device-credentials-id").innerText}/credentials`,
+        {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "PUT",
+            body: JSON.stringify({
+                ssh_username: document.querySelector("#edit-device-credentials-ssh-username").value,
+                ssh_key_type: document.querySelector("#edit-device-credentials-ssh-key-type").value,
+                ssh_key: document.querySelector("#edit-device-credentials-ssh-key").value,
+                ssh_password: document.querySelector("#edit-device-credentials-ssh-password").value,
+            })
+        })
+    .then(() => { window.location.reload(); });
+}
+
 function deleteDevice() {    
     document.querySelector("#delete-device").classList.add("d-none");
     document.querySelector("#delete-device-loading").classList.remove("d-none");
@@ -231,6 +252,7 @@ document.querySelector("#add-device-cancel").addEventListener("click", () => {
 
 document.querySelector("#add-device").addEventListener("click", addDevice);
 document.querySelector("#edit-device").addEventListener("click", editDevice);
+document.querySelector("#edit-device-credentials").addEventListener("click", editDeviceCredentials);
 document.querySelector("#delete-device").addEventListener("click", deleteDevice);
 
 document.querySelectorAll(".device-delete-button").forEach((e) => {
@@ -245,6 +267,15 @@ document.querySelectorAll(".device-edit-button").forEach((e) => {
         document.querySelector("#edit-device-id").innerHTML = evt.currentTarget.parentElement.parentElement.getAttribute("device-id");
         ["name", "mac-address", "ip-address", "shutdown-command", "reboot-command", "logout-command", "sleep-command", "hibernate-command"].forEach(propertyName => {
             document.querySelector(`#edit-device-${propertyName}`).value = evt.currentTarget.parentElement.parentElement.querySelector(`.device-property-${propertyName}`).innerText;
+        });
+    });
+});
+
+document.querySelectorAll(".device-edit-credentials-button").forEach((e) => {
+    e.addEventListener("click", (evt) => {
+        document.querySelector("#edit-device-credentials-id").innerHTML = evt.currentTarget.parentElement.parentElement.getAttribute("device-id");
+        ["ssh-username", "ssh-key-type", "ssh-key", "ssh-password"].forEach(propertyName => {
+            document.querySelector(`#edit-device-credentials-${propertyName}`).value = "";
         });
     });
 });

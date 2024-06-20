@@ -301,6 +301,50 @@
             </div>
         </div>
 
+        <div class="modal fade" id="edit-device-credentials-modal" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="h1 modal-title fs-5"><span text-id="39">Edit device credentials</span></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <span class="d-none" id="edit-device-credentials-id"></span>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-credentials-ssh-username" placeholder=" ">
+                            <label for="edit-device-credentials-ssh-username"><span text-id="25">SSH username</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <select class="form-select" id="edit-device-credentials-ssh-key-type">
+                                <option value="" selected></option>
+                                <option value="DSA">DSA</option>
+                                <option value="RSA">RSA</option>
+                                <option value="ECDSA">ECDSA</option>
+                                <option value="Ed25519">Ed25519</option>
+                            </select>
+                            <label for="edit-device-credentials-ssh-key-type"><span text-id="26">SSH key type</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <textarea class="form-control" placeholder=" " id="edit-device-credentials-ssh-key" style="height: 175px"></textarea>
+                            <label for="edit-device-credentials-ssh-key"><span text-id="27">SSH key</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="edit-device-credentials-ssh-password" placeholder=" ">
+                            <label for="edit-device-credentials-ssh-password"><span text-id="28">SSH password</span></label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="edit-device-credentials-cancel" data-bs-dismiss="modal"><span text-id="7">Cancel</span></button>
+                        <button class="btn btn-primary" id="edit-device-credentials"><span text-id="35">Edit</span></button>
+                        <button class="btn btn-primary d-none" id="edit-device-credentials-loading" disabled>
+                            <span class="spinner-border spinner-border-sm"></span>
+                            <span text-id="35">Edit</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="modal fade" id="delete-device-modal" data-bs-backdrop="static">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -413,6 +457,9 @@
 
                 <button class="btn btn-secondary btn-sm device-edit-button toggle-tooltip" data-bs-placement="bottom" data-bs-original-title="Edit" data-bs-toggle="modal" data-bs-target="#edit-device-modal">
                     <i class="bi bi-pencil-fill"></i>
+                </button>
+                <button class="btn btn-secondary btn-sm device-edit-credentials-button toggle-tooltip" data-bs-placement="bottom" data-bs-original-title="Edit credentials" data-bs-toggle="modal" data-bs-target="#edit-device-credentials-modal">
+                    <i class="bi bi-person-fill-lock"></i>
                 </button>
                 <button class="btn btn-danger btn-sm device-delete-button toggle-tooltip" data-bs-placement="bottom" data-bs-original-title="Delete" data-bs-toggle="modal" data-bs-target="#delete-device-modal">
                     <i class="bi bi-trash-fill"></i>

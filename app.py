@@ -328,7 +328,7 @@ class Device:
         db.commit()
         cursor.close()
         db.close()
-    
+
     def edit_credentials(self, ssh_username, ssh_key_type, ssh_key, ssh_password):
         db = mysql.connector.connect(**mysql_configs)
         cursor = db.cursor(dictionary=True)
