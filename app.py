@@ -229,7 +229,7 @@ class Device:
         self.reboot_command = result[0]["reboot_command"]
         self.logout_command = result[0]["logout_command"]
         self.sleep_command = result[0]["sleep_command"]
-        self.hibernate_command = result[0]["sleep_command"]
+        self.hibernate_command = result[0]["hibernate_command"]
 
     @property
     def user(self):
