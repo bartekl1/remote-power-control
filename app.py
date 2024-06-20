@@ -321,10 +321,18 @@ class Device:
             raise DeviceError("Hibernate is not available for this device")
         self._exec_ssh_command(self.hibernate_command)
 
-    def edit(self, name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command):
+    def edit(self, name, mac_address, ip_address, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command):
         db = mysql.connector.connect(**mysql_configs)
         cursor = db.cursor(dictionary=True)
-        cursor.execute("UPDATE devices SET name = %s, mac_address = %s, ip_address = %s, ssh_username = %s, ssh_key_type = %s, ssh_key = %s, ssh_password = %s, shutdown_command = %s, reboot_command = %s, logout_command = %s, sleep_command = %s, hibernate_command = %s WHERE id = %s", (name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command, self.device_id, ))
+        cursor.execute("UPDATE devices SET name = %s, mac_address = %s, ip_address = %s, shutdown_command = %s, reboot_command = %s, logout_command = %s, sleep_command = %s, hibernate_command = %s WHERE id = %s", (name, mac_address, ip_address, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command, self.device_id, ))
+        db.commit()
+        cursor.close()
+        db.close()
+    
+    def edit_credentials(self, ssh_username, ssh_key_type, ssh_key, ssh_password):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("UPDATE devices SET ssh_username = %s, ssh_key_type = %s, ssh_key = %s, ssh_password = %s WHERE id = %s", (ssh_username, ssh_key_type, ssh_key, ssh_password, self.device_id, ))
         db.commit()
         cursor.close()
         db.close()
@@ -485,10 +493,6 @@ def edit_device(device_id):
     name = request.json.get("name")
     mac_address = request.json.get("mac_address")
     ip_address = request.json.get("ip_address")
-    ssh_username = request.json.get("ssh_username")
-    ssh_key_type = request.json.get("ssh_key_type")
-    ssh_key = request.json.get("ssh_key")
-    ssh_password = request.json.get("ssh_password")
     shutdown_command = request.json.get("shutdown_command")
     reboot_command = request.json.get("reboot_command")
     logout_command = request.json.get("logout_command")
@@ -503,7 +507,28 @@ def edit_device(device_id):
     if current_user.user_id != device.user.user_id:
         return {"status": "error", "error": "access_denied"}
 
-    device.edit(name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command)
+    device.edit(name, mac_address, ip_address, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command)
+
+    return {"status": "ok"}
+
+
+@app.route("/api/device/<device_id>/credentials", methods=["PUT"])
+@login_required
+def edit_device_credentials(device_id):
+    ssh_username = request.json.get("ssh_username")
+    ssh_key_type = request.json.get("ssh_key_type")
+    ssh_key = request.json.get("ssh_key")
+    ssh_password = request.json.get("ssh_password")
+
+    try:
+        device = Device(device_id)
+    except DeviceError:
+        return {"status": "error", "error": "device_not_found"}
+
+    if current_user.user_id != device.user.user_id:
+        return {"status": "error", "error": "access_denied"}
+
+    device.edit_credentials(ssh_username, ssh_key_type, ssh_key, ssh_password)
 
     return {"status": "ok"}
 

@@ -248,13 +248,14 @@
         </div>
 
         <div class="modal fade" id="edit-device-modal" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <span class="h1 modal-title fs-5"><span text-id="34">Edit device</span></span>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
+                        <span class="d-none" id="edit-device-id"></span>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="edit-device-name" placeholder=" ">
                             <label for="edit-device-name"><span text-id="22">Name</span></label>
@@ -266,28 +267,6 @@
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="edit-device-ip-address" placeholder=" ">
                             <label for="edit-device-ip-address"><span text-id="24">IP address</span></label>
-                        </div>
-                        <div class="form-floating mb-2">
-                            <input type="text" class="form-control" id="edit-device-ssh-username" placeholder=" ">
-                            <label for="edit-device-ssh-username"><span text-id="25">SSH username</span></label>
-                        </div>
-                        <div class="form-floating mb-2">
-                            <select class="form-select" id="edit-device-ssh-key-type">
-                                <option value="" selected></option>
-                                <option value="DSA">DSA</option>
-                                <option value="RSA">RSA</option>
-                                <option value="ECDSA">ECDSA</option>
-                                <option value="Ed25519">Ed25519</option>
-                            </select>
-                            <label for="edit-device-ssh-key-type"><span text-id="26">SSH key type</span></label>
-                        </div>
-                        <div class="form-floating mb-2">
-                            <textarea class="form-control" placeholder=" " id="edit-device-ssh-key" style="height: 175px"></textarea>
-                            <label for="edit-device-ssh-key"><span text-id="27">SSH key</span></label>
-                        </div>
-                        <div class="form-floating mb-2">
-                            <input type="text" class="form-control" id="edit-device-ssh-password" placeholder=" ">
-                            <label for="edit-device-ssh-password"><span text-id="28">SSH password</span></label>
                         </div>
                         <div class="form-floating mb-2">
                             <input type="text" class="form-control" id="edit-device-shutdown-command" placeholder=" ">
@@ -354,6 +333,17 @@
 
         {% for device in current_user.devices %}
         <div class="device-frame" device-id="{{ device.device_id }}">
+            <div class="d-none device-properties">
+                <div class="device-property-name">{% if device.name is not none %}{{ device.name }}{% else %}{% endif %}</div>
+                <div class="device-property-mac-address">{% if device.mac_address is not none %}{{ device.mac_address }}{% else %}{% endif %}</div>
+                <div class="device-property-ip-address">{% if device.ip_address is not none %}{{ device.ip_address }}{% else %}{% endif %}</div>
+                <div class="device-property-shutdown-command">{% if device.shutdown_command is not none %}{{ device.shutdown_command }}{% else %}{% endif %}</div>
+                <div class="device-property-reboot-command">{% if device.reboot_command is not none %}{{ device.reboot_command }}{% else %}{% endif %}</div>
+                <div class="device-property-logout-command">{% if device.logout_command is not none %}{{ device.logout_command }}{% else %}{% endif %}</div>
+                <div class="device-property-sleep-command">{% if device.sleep_command is not none %}{{ device.sleep_command }}{% else %}{% endif %}</div>
+                <div class="device-property-hibernate-command">{% if device.hibernate_command is not none %}{{ device.hibernate_command }}{% else %}{% endif %}</div>
+            </div>
+
             <div class="device-name fs-3">{{ device.name }}</div>
 
             {% if device.ip_address is not none and device.ip_address != "" %}

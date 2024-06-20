@@ -156,6 +156,31 @@ function addDevice() {
     .then(() => { window.location.reload(); });
 }
 
+function editDevice() {    
+    document.querySelector("#edit-device").classList.add("d-none");
+    document.querySelector("#edit-device-loading").classList.remove("d-none");
+
+    fetch(`/api/device/${document.querySelector("#edit-device-id").innerText}`,
+        {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "PUT",
+            body: JSON.stringify({
+                name: document.querySelector("#edit-device-name").value,
+                mac_address: document.querySelector("#edit-device-mac-address").value,
+                ip_address: document.querySelector("#edit-device-ip-address").value,
+                shutdown_command: document.querySelector("#edit-device-shutdown-command").value,
+                reboot_command: document.querySelector("#edit-device-reboot-command").value,
+                logout_command: document.querySelector("#edit-device-logout-command").value,
+                sleep_command: document.querySelector("#edit-device-sleep-command").value,
+                hibernate_command: document.querySelector("#edit-device-hibernate-command").value,
+            })
+        })
+    .then(() => { window.location.reload(); });
+}
+
 function deleteDevice() {    
     document.querySelector("#delete-device").classList.add("d-none");
     document.querySelector("#delete-device-loading").classList.remove("d-none");
@@ -205,11 +230,21 @@ document.querySelector("#add-device-cancel").addEventListener("click", () => {
 });
 
 document.querySelector("#add-device").addEventListener("click", addDevice);
+document.querySelector("#edit-device").addEventListener("click", editDevice);
 document.querySelector("#delete-device").addEventListener("click", deleteDevice);
 
 document.querySelectorAll(".device-delete-button").forEach((e) => {
     e.addEventListener("click", (evt) => {
         document.querySelector("#delete-device-name").innerHTML = evt.currentTarget.parentElement.parentElement.querySelector(".device-name").innerText;
         document.querySelector("#delete-device-id").innerHTML = evt.currentTarget.parentElement.parentElement.getAttribute("device-id");
+    });
+});
+
+document.querySelectorAll(".device-edit-button").forEach((e) => {
+    e.addEventListener("click", (evt) => {
+        document.querySelector("#edit-device-id").innerHTML = evt.currentTarget.parentElement.parentElement.getAttribute("device-id");
+        ["name", "mac-address", "ip-address", "shutdown-command", "reboot-command", "logout-command", "sleep-command", "hibernate-command"].forEach(propertyName => {
+            document.querySelector(`#edit-device-${propertyName}`).value = evt.currentTarget.parentElement.parentElement.querySelector(`.device-property-${propertyName}`).innerText;
+        });
     });
 });
