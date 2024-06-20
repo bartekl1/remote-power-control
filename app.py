@@ -188,12 +188,12 @@ class User(UserMixin):
             return None
 
         return User(result[0]["id"])
-    
+
     @staticmethod
     def get_by_access_token(access_token):
         db = mysql.connector.connect(**mysql_configs)
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT user_id FROM access_tokens WHERE token = %s LIMIT 1", (access_token, ))
+        cursor.execute("SELECT user_id FROM access_tokens WHERE token = %s LIMIT 1", (hashlib.sha256(access_token.encode('utf-8')).hexdigest(), ))
         result = cursor.fetchall()
         cursor.close()
         db.close()
@@ -216,6 +216,31 @@ class User(UserMixin):
 
     def create_device(self, name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command):
         return Device.create(self, name, mac_address, ip_address, ssh_username, ssh_key_type, ssh_key, ssh_password, shutdown_command, reboot_command, logout_command, sleep_command, hibernate_command)
+
+    @property
+    def access_tokens(self):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT id, name FROM access_tokens WHERE user_id = %s", (self.user_id, ))
+        result = cursor.fetchall()
+        cursor.close()
+        db.close()
+
+        return result
+
+    def create_access_token(self, name):
+        token = str(self.user_id) + str(int(time.time())) + "".join(random.choices(string.ascii_letters + string.digits, k=50))
+        token = hashlib.sha256(token.encode('utf-8')).hexdigest()
+        hashed_token = hashlib.sha256(token.encode('utf-8')).hexdigest()
+
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("INSERT INTO access_tokens (user_id, name, token) VALUES (%s, %s, %s)", (self.user_id, name, hashed_token))
+        db.commit()
+        cursor.close()
+        db.close()
+
+        return token
 
 
 class Device:
@@ -489,6 +514,25 @@ def enable_2fa():
 def disable_2fa():
     current_user.disable_2fa()
     return {"status": "ok"}
+
+
+@app.route("/api/user/access_tokens")
+@login_required
+def get_access_tokens():
+    return {"status": "ok", "access_tokens": current_user.access_tokens}
+
+
+@app.route("/api/user/access_tokens", methods=["POST"])
+@login_required
+def create_access_token():
+    name = request.json.get("name")
+
+    if name is None or name == "":
+        return {"status": "error", "error": "name_required"}
+
+    token = current_user.create_access_token(name)
+
+    return {"status": "ok", "token": token}
 
 
 @app.route("/api/device", methods=["POST"])
