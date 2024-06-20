@@ -20,6 +20,19 @@ const textTranslations = [
     "2FA jest włączone",
     "2FA jest wyłączone",
     "Dodaj",
+    "Dodaj urządzenie",
+    "Nazwa",
+    "Adres MAC",
+    "Adres IP",
+    "Nazwa użytkownika SSH",
+    "Typ klucza SSH",
+    "Klucz SSH",
+    "Hasło SSH",
+    "Polecenie zamykania",
+    "Polecenie restartu",
+    "Polecenie wylogowywania",
+    "Polecenie uśpienia",
+    "Polecenie hibernacji",
 ];
 
 const titleTranslations = {

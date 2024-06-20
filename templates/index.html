@@ -172,7 +172,82 @@
             </div>
         </div>
 
-        <button class="btn btn-success btn-sm ms-3 mt-2 mb-1" id="add-device-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Add">
+        <div class="modal fade" id="add-device-modal" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="h1 modal-title fs-5"><span text-id="21">Add device</span></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-name" placeholder=" ">
+                            <label for="device-name"><span text-id="22">Name</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-mac-address" placeholder=" ">
+                            <label for="mac-address"><span text-id="23">MAC address</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-ip-address" placeholder=" ">
+                            <label for="ip-address"><span text-id="24">IP address</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-ssh-username" placeholder=" ">
+                            <label for="ssh-username"><span text-id="25">SSH username</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <select class="form-select" id="add-device-ssh-key-type">
+                                <option value="" selected></option>
+                                <option value="DSA">DSA</option>
+                                <option value="RSA">RSA</option>
+                                <option value="ECDSA">ECDSA</option>
+                                <option value="Ed25519">Ed25519</option>
+                            </select>
+                            <label for="ssh-key-type"><span text-id="26">SSH key type</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <textarea class="form-control" placeholder=" " id="add-device-ssh-key" style="height: 175px"></textarea>
+                            <label for="ssh-key"><span text-id="27">SSH key</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-ssh-password" placeholder=" ">
+                            <label for="ssh-password"><span text-id="28">SSH password</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-shutdown-command" placeholder=" ">
+                            <label for="shutdown-command"><span text-id="29">Shutdown command</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-reboot-command" placeholder=" ">
+                            <label for="reboot-command"><span text-id="30">Reboot command</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-logout-command" placeholder=" ">
+                            <label for="logout-command"><span text-id="31">Logout command</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-sleep-command" placeholder=" ">
+                            <label for="sleep-command"><span text-id="32">Sleep command</span></label>
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text" class="form-control" id="add-device-hibernate-command" placeholder=" ">
+                            <label for="hibernate-command"><span text-id="33">Hibernate command</span></label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="add-device-cancel" data-bs-dismiss="modal"><span text-id="7">Cancel</span></button>
+                        <button class="btn btn-success" id="add-device"><span text-id="20">Add</span></button>
+                        <button class="btn btn-success d-none" id="add-device-loading" disabled>
+                            <span class="spinner-border spinner-border-sm"></span>
+                            <span text-id="20">Add</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-success btn-sm ms-3 mt-2 mb-1 toggle-tooltip" id="add-device-button" data-bs-placement="bottom" data-bs-original-title="Add" data-bs-toggle="modal" data-bs-target="#add-device-modal">
             <i class="bi bi-plus-lg"></i>
         </button>
 
@@ -258,6 +333,7 @@
         <script src="/static/js/translate.js"></script>
         <script src="/static/js/error.js"></script>
         <script src="/static/js/copy.js"></script>
+        <script src="/static/js/draggable.js"></script>
         
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@master/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>

@@ -115,3 +115,13 @@ body {
         border-color: #6b6e71;
     }
 }
+
+.modal-header {
+    cursor: move;
+}
+
+.modal-content {
+    resize: both;
+    overflow: auto;
+    height: 100%;
+}
