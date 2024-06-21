@@ -1,0 +1,13 @@
+# /etc/systemd/system/remote-power-control.service
+
+[Unit]
+Description=Remote Power Control
+After=network.target
+
+[Service]
+WorkingDirectory=<PATH>
+ExecStart=/usr/bin/python3 <PATH>/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
