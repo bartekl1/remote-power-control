@@ -226,7 +226,7 @@ class User(UserMixin):
         cursor.close()
         db.close()
 
-        return result
+        return {str(row["id"]): row["name"] for row in result}
 
     def create_access_token(self, name):
         token = str(self.user_id) + str(int(time.time())) + "".join(random.choices(string.ascii_letters + string.digits, k=50))
@@ -236,11 +236,28 @@ class User(UserMixin):
         db = mysql.connector.connect(**mysql_configs)
         cursor = db.cursor(dictionary=True)
         cursor.execute("INSERT INTO access_tokens (user_id, name, token) VALUES (%s, %s, %s)", (self.user_id, name, hashed_token))
+        token_id = cursor.lastrowid
         db.commit()
         cursor.close()
         db.close()
 
-        return token
+        return token_id, token
+
+    def rename_access_token(self, token_id, name):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("UPDATE access_tokens SET name = %s WHERE id = %s AND user_id = %s", (name, token_id, self.user_id, ))
+        db.commit()
+        cursor.close()
+        db.close()
+
+    def delete_access_token(self, token_id):
+        db = mysql.connector.connect(**mysql_configs)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("DELETE FROM access_tokens WHERE id = %s AND user_id = %s", (token_id, self.user_id, ))
+        db.commit()
+        cursor.close()
+        db.close()
 
 
 class Device:
@@ -530,9 +547,36 @@ def create_access_token():
     if name is None or name == "":
         return {"status": "error", "error": "name_required"}
 
-    token = current_user.create_access_token(name)
+    token_id, token = current_user.create_access_token(name)
 
-    return {"status": "ok", "token": token}
+    return {"status": "ok", "token_id": token_id, "token": token}
+
+
+@app.route("/api/user/access_tokens/<token_id>", methods=["PUT"])
+@login_required
+def rename_access_token(token_id):
+    name = request.json.get("name")
+
+    if token_id not in current_user.access_tokens.keys():
+        return {"status": "error", "error": "access_token_not_found"}
+
+    if name is None or name == "":
+        return {"status": "error", "error": "name_required"}
+
+    current_user.rename_access_token(token_id, name)
+
+    return {"status": "ok"}
+
+
+@app.route("/api/user/access_tokens/<token_id>", methods=["DELETE"])
+@login_required
+def delete_access_token(token_id):
+    if token_id not in current_user.access_tokens.keys():
+        return {"status": "error", "error": "access_token_not_found"}
+
+    current_user.delete_access_token(token_id)
+
+    return {"status": "ok"}
 
 
 @app.route("/api/device", methods=["POST"])
