@@ -39,6 +39,8 @@ const textTranslations = [
     "Usuń",
     "Usunąć",
     "Edytuj dane logowania do urządzenia",
+    "Tokeny dostępu",
+    "Nazwa tokena",
 ];
 
 const titleTranslations = {
@@ -63,6 +65,7 @@ const dataBSTranslations = {
     "Hibernate": "Hibernuj",
     "Add": "Dodaj",
     "Edit credentials": "Edytuj dane logowania",
+    "Rename": "Zmień nazwę",
 };
 
 if (window.navigator.language.split("-")[0] == "pl") {

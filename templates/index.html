@@ -38,6 +38,7 @@
                     <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit-user-modal"><span text-id="8">Edit user</span></a></li>
                     <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#change-password-modal"><span text-id="9">Change password</span></a></li>
                     <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manage-2fa-modal">2FA</a></li>
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manage-access-tokens-modal"><span text-id="40">Access tokens</span></a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/api/logout"><span text-id="10">Log out</span></a></li>
                 </ul>
@@ -167,6 +168,66 @@
                             <span text-id="16">Enable</span>
                         </button>
                         {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="manage-access-tokens-modal" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="h1 modal-title fs-5"><span text-id="40">Access tokens</span></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <div class="form-floating">
+                              <input type="text" class="form-control" id="new-token-name" placeholder=" ">
+                              <label for="new-token-name"><span text-id="41">Token name</span></label>
+                            </div>
+                            <button class="btn btn-outline-success" type="button" id="create-access-token-button">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
+
+                        <div id="access-tokens">
+                            {% for token_id, token_name in current_user.access_tokens.items() %}
+                            <div class="token-frame" token-id="{{ token_id }}">
+                                <span class="token-id d-none">{{ token_id }}</span>
+
+                                <div class="d-flex">
+                                    <div class="token-name-div">
+                                        <span class="token-name fs-5">{{ token_name }}</span>
+                                    </div>
+
+                                    <div class="token-rename-div d-none">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control token-rename-input">
+                                            <button class="btn btn-outline-secondary token-rename-cancel">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                            <button class="btn btn-outline-primary token-rename-submit">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                        
+                                    <div class="ms-auto">
+                                        <button class="btn btn-secondary btn-sm token-rename-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Rename">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm token-delete-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Delete">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm token-delete-loading-button d-none" disabled>
+                                            <span class="spinner-border spinner-border-sm"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>

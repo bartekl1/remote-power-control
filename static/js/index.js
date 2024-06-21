@@ -210,6 +210,147 @@ function deleteDevice() {
     .then(() => { window.location.reload(); });
 }
 
+function prepareRenameToken(evt) {
+    evt.currentTarget.classList.add("d-none");
+    evt.currentTarget.parentElement.parentElement.parentElement.querySelector(".token-name-div").classList.add("d-none");
+    evt.currentTarget.parentElement.parentElement.parentElement.querySelector(".token-rename-div").classList.remove("d-none");
+    evt.currentTarget.parentElement.parentElement.parentElement.querySelector(".token-rename-input").value = evt.currentTarget.parentElement.parentElement.parentElement.querySelector(".token-name").innerText;
+}
+
+function cancelRenameToken(evt) {
+    evt.currentTarget.parentElement.parentElement.parentElement.parentElement.querySelector(".token-rename-div").classList.add("d-none");
+    evt.currentTarget.parentElement.parentElement.parentElement.parentElement.querySelector(".token-rename-button").classList.remove("d-none");
+    evt.currentTarget.parentElement.parentElement.parentElement.parentElement.querySelector(".token-name-div").classList.remove("d-none");
+}
+
+function renameToken(evt) {
+    evt.currentTarget.disabled = true;
+    evt.currentTarget.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+    evt.currentTarget.parentElement.parentElement.querySelector(".token-rename-cancel").disabled = true;
+    evt.currentTarget.parentElement.parentElement.parentElement.parentElement.querySelector(".token-name").innerHTML = evt.currentTarget.parentElement.parentElement.querySelector(".token-rename-input").value;
+
+    fetch(`/api/user/access_tokens/${evt.currentTarget.parentElement.parentElement.parentElement.parentElement.querySelector(".token-id").innerText}`,
+        {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "PUT",
+            body: JSON.stringify({
+                name: evt.currentTarget.parentElement.parentElement.querySelector(".token-rename-input").value
+            })
+        })
+    .then((res) => {
+        document.querySelector(`[token-id="${res.url.match(/\/api\/user\/access_tokens\/(\w+)/)[1]}"`).querySelector(".token-rename-div").classList.add("d-none");
+        document.querySelector(`[token-id="${res.url.match(/\/api\/user\/access_tokens\/(\w+)/)[1]}"`).querySelector(".token-rename-button").classList.remove("d-none");
+        document.querySelector(`[token-id="${res.url.match(/\/api\/user\/access_tokens\/(\w+)/)[1]}"`).querySelector(".token-name-div").classList.remove("d-none");
+        document.querySelector(`[token-id="${res.url.match(/\/api\/user\/access_tokens\/(\w+)/)[1]}"`).querySelector(".token-rename-submit").disabled = false;
+        document.querySelector(`[token-id="${res.url.match(/\/api\/user\/access_tokens\/(\w+)/)[1]}"`).querySelector(".token-rename-submit").innerHTML = '<i class="bi bi-check-lg"></i>';
+        document.querySelector(`[token-id="${res.url.match(/\/api\/user\/access_tokens\/(\w+)/)[1]}"`).querySelector(".token-rename-cancel").disabled = false;
+    });
+}
+
+function deleteToken(evt) {
+    evt.currentTarget.classList.add("d-none");
+    evt.currentTarget.parentElement.parentElement.querySelector(".token-delete-loading-button").classList.remove("d-none");
+
+    fetch(`/api/user/access_tokens/${evt.currentTarget.parentElement.parentElement.parentElement.querySelector(".token-id").innerText}`, { method: "DELETE" })
+    .then((res) => { document.querySelector(`[token-id="${res.url.match(/\/api\/user\/access_tokens\/(\w+)/)[1]}"`).remove(); });
+}
+
+function createToken(evt) {
+    evt.currentTarget.disabled = true;
+    evt.currentTarget.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+    fetch("/api/user/access_tokens",
+        {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify({
+                name: document.querySelector("#new-token-name").value
+            })
+        })
+    .then((res) => { return res.json(); })
+    .then((json) => {
+        document.querySelector("#new-token-name").value = "";
+
+        var tokenFrame = document.createElement("div");
+        tokenFrame.classList.add("token-frame");
+        tokenFrame.setAttribute("token-id", json.token_id);
+        tokenFrame.innerHTML = `<span class="token-id d-none">{{ token_id }}</span>
+        <div class="d-flex">
+            <div class="token-name-div">
+                <span class="token-name fs-5">{{ token_name }}</span>
+            </div>
+
+            <div class="token-rename-div d-none">
+                <div class="input-group">
+                    <input type="text" class="form-control token-rename-input">
+                    <button class="btn btn-outline-secondary token-rename-cancel">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                    <button class="btn btn-outline-primary token-rename-submit">
+                        <i class="bi bi-check-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ms-auto">
+                <button class="btn btn-secondary btn-sm token-rename-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Rename">
+                    <i class="bi bi-pencil-fill"></i>
+                </button>
+                <button class="btn btn-danger btn-sm token-delete-button" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="Delete">
+                    <i class="bi bi-trash-fill"></i>
+                </button>
+                <button class="btn btn-danger btn-sm token-delete-loading-button d-none" disabled>
+                    <span class="spinner-border spinner-border-sm"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="input-group mt-2">
+            <input type="text" class="form-control new-token">
+            <button class="btn btn-outline-primary new-token-copy">
+                <i class="bi bi-clipboard"></i>
+            </button>
+        </div>
+        `;
+
+        tokenFrame.querySelector(".token-id").innerHTML = json.token_id;
+        tokenFrame.querySelector(".token-name").innerHTML = json.name;
+        tokenFrame.querySelector(".new-token").value = json.token;
+
+        tokenFrame.querySelector(".token-rename-button").addEventListener("click", prepareRenameToken);
+        tokenFrame.querySelector(".token-rename-cancel").addEventListener("click", cancelRenameToken);
+        tokenFrame.querySelector(".token-rename-submit").addEventListener("click", renameToken);
+        tokenFrame.querySelector(".token-delete-button").addEventListener("click", deleteToken);
+
+        document.querySelector("#access-tokens").append(tokenFrame);
+
+        document.querySelector("#create-access-token-button").disabled = false;
+        document.querySelector("#create-access-token-button").innerHTML = '<i class="bi bi-plus-lg"></i>';
+
+        tokenFrame.querySelector(".new-token-copy").addEventListener("click", (evt) => {
+            navigator.clipboard.writeText(
+                evt.currentTarget.parentElement.querySelector("input").value
+            );
+    
+            evt.currentTarget.innerHTML = '<i class="bi bi-clipboard-check"></i>';
+    
+            setTimeout(
+                (el) => {
+                    el.innerHTML = '<i class="bi bi-clipboard"></i>';
+                },
+                2000,
+                evt.currentTarget
+            );
+        });
+    });
+}
+
 document.querySelector("#save-user").addEventListener("click", editUser);
 document.querySelector("#change-password").addEventListener("click", changePassword);
 
@@ -279,3 +420,9 @@ document.querySelectorAll(".device-edit-credentials-button").forEach((e) => {
         });
     });
 });
+
+document.querySelectorAll(".token-rename-button").forEach((e) => { e.addEventListener("click", prepareRenameToken); });
+document.querySelectorAll(".token-rename-cancel").forEach((e) => { e.addEventListener("click", cancelRenameToken); });
+document.querySelectorAll(".token-rename-submit").forEach((e) => { e.addEventListener("click", renameToken); });
+document.querySelectorAll(".token-delete-button").forEach((e) => { e.addEventListener("click", deleteToken); });
+document.querySelector("#create-access-token-button").addEventListener("click", createToken);

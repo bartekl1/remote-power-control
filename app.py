@@ -549,7 +549,7 @@ def create_access_token():
 
     token_id, token = current_user.create_access_token(name)
 
-    return {"status": "ok", "token_id": token_id, "token": token}
+    return {"status": "ok", "token_id": token_id, "token": token, "name": name}
 
 
 @app.route("/api/user/access_tokens/<token_id>", methods=["PUT"])
