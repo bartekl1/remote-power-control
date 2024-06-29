@@ -318,7 +318,8 @@ class Device:
     def wake(self):
         if not self.wake_available:
             raise DeviceError("Wake is not available for this device")
-        send_magic_packet(self.mac_address)
+        interface = configs["interface"] if "interface" in configs.keys() else None
+        send_magic_packet(self.mac_address, interface=interface)
 
     def _exec_ssh_command(self, command):
         client = paramiko.SSHClient()
