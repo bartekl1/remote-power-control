@@ -37,6 +37,7 @@ login_manager = LoginManager()
 app = Flask(__name__)
 app.secret_key = configs["secret_key"]
 login_manager.init_app(app)
+app.config["REMEMBER_COOKIE_NAME"] = "remember_token_remote_power_control"
 
 
 class UserError(Exception):
